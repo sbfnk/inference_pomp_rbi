@@ -623,7 +623,7 @@ In our case, the optimal number of particles found is `r format(nparticles, scie
 
 We also need to determine a suitable proposal distribution for running MCMC.
 To do this, we can use the `adapt_proposal` function contained in the `rbi.helpers` package.
-This, once again, does a series of test runs and adapts the proposal distribution after every run usingn the empirical covariance of accepted samples.
+This, once again, does a series of test runs and adapts the proposal distribution after every run using the empirical covariance of accepted samples.
 
 ```{r rbi_adapt_proposal, message=FALSE}
 proposal_adapted <- particles_adapted %>%
