@@ -467,14 +467,14 @@ For more details on **rbi**, consult the [introductory vignette](https://cran.r-
 
 We first load the necessary libraries and formulate the model
 
-```{r rbi_init}
+```{r rbi_init,cache=FALSE}
 library(rbi)
 library(rbi.helpers)
 library(stringi) ## for reading the model from a string
 library(pomp2) ## for the bsflu data set
 library(tidyverse)
 
-set.seed(296825729)
+set.seed(296825852)
 
 model_str <- '
   model bsflu {
