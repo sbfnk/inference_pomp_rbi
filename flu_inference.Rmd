@@ -8,7 +8,7 @@ bibliography: flu_inference.bib
 
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 
-This tutorial is based on the tutorial on [Iterated filtering: principles and practice](https://kingaa.github.io/sbied/mif/mif.html#building-up-a-picture-of-the-likelihood-surface) by Edward Ionides and Aaron A. King.
+This tutorial provides an example of inference using a mathematical model fitted to data from an infectious disease outbreak. It is based on the tutorial on [Iterated filtering: principles and practice](https://kingaa.github.io/sbied/mif/mif.html#building-up-a-picture-of-the-likelihood-surface) by Edward Ionides and Aaron A. King. We demonstrate inference using two different methods (Iterated Filtering and Particle Markov-chain Monte Carlo) using two different R packages (**pomp2** and **rbi**).
 
 It was produced with **R** version `r getRversion()`, **pomp2** version `r packageVersion("pomp2")` and **rbi** version `r packageVersion("rbi")` on an Intel Xeon E5-2603 v3 1.6GHz (6-core) CPU and Nvidia Tesla P100 16GB NVLink GPU.
 
