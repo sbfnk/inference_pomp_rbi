@@ -645,7 +645,11 @@ posterior <- proposal_adapted %>%
     sample(nsamples=10000)
 ```
 
-Generating the samples took `r round(bi_read(posterior)$clock/1e+6/60)` minutes.
+```{r rbi_posterior_minutes, echo=FALSE}
+cpu_minutes <- round(bi_read(posterior)$clock/1e+6/60)
+```
+
+Generating the samples took `r cpu_minutes` minutes.
 
 We can plot the filtered trajectories from the posterior distribution,
 ```{r rbi_posterior_trajectories}
@@ -689,7 +693,11 @@ posterior <- proposal_adapted %>%
   sample(nsamples=10000, cuda=TRUE)
 ```
 
-Using the GPU, generating 10,000 samples only took `r round(bi_read(posterior)$clock/1000/1000/60)` minutes.
+```{r rbi_posterior_cuda_minutes, echo=FALSE}
+gpu_minutes <- round(bi_read(posterior)$clock/1e+6/60)
+```
+
+Using the GPU, generating 10,000 samples took `r gpu_minutes` minutes.
 
 ## pMCMC in pomp2
 
@@ -724,6 +732,6 @@ pmcmc(pomp(mifs_local[[1]], dprior=Csnippet(priorDens),
 end <- Sys.time()
 ```
 
-Generating the 10,000 samples with **pomp2** took `r as.integer(round(difftime(end, start, units='mins')))` minutes altogether.
+Generating the 10,000 samples with **pomp2** took `r as.integer(round(difftime(end, start, units='mins')))` minutes.
 
 # References
