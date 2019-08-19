@@ -3,8 +3,7 @@ title: "Investigating an infectious disease outbreak with mathematical models"
 output:
   html_document:
     toc: yes
-bibliography: sbied.bib
-csl: ecology.csl
+bibliography: flu_inference.bib
 ---
 
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
