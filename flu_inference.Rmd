@@ -464,7 +464,7 @@ We next conduct inference using the same model and the same dataset, but this ti
 For details on how to install **rbi** and the required **LibBi** library, please visit the [rbi github page](https://github.com/sbfnk/rbi).
 For more details on **rbi**, consult the [introductory vignette](https://cran.r-project.org/web/packages/rbi/vignettes/introduction.html), and for an introduction to **LibBi** the corresponding [article in the Journal of Statistical Software](http://dx.doi.org/10.18637/jss.v067.i10).
 
-We first load the necessary libraries and formulate the model
+We first load the necessary libraries
 
 ```{r rbi_init,cache=FALSE}
 library(rbi)
@@ -474,7 +474,11 @@ library(pomp2) ## for the bsflu data set
 library(tidyverse)
 
 set.seed(296825852)
+```
 
+Next, we formulate the model
+
+```{r rbi_model}
 model_str <- '
   model bsflu {
     const N = 763
