@@ -10,7 +10,7 @@ bibliography: flu_inference.bib
 
 This tutorial provides an example of inference using a mathematical model fitted to data from an infectious disease outbreak. It is based on the tutorial on [Iterated filtering: principles and practice](https://kingaa.github.io/sbied/mif/mif.html#building-up-a-picture-of-the-likelihood-surface) by Edward Ionides and Aaron A. King. We demonstrate inference using two different methods (Iterated Filtering and Particle Markov-chain Monte Carlo) using two different R packages (**pomp2** and **rbi**).
 
-It was produced with **R** version `r getRversion()`, **pomp2** version `r packageVersion("pomp2")` and **rbi** version `r packageVersion("rbi")` on an Intel Xeon E5-2603 v3 1.6GHz (6-core) CPU and Nvidia Tesla P100 16GB NVLink GPU.
+The tutorial was produced with **R** version `r getRversion()`, **pomp** version `r packageVersion("pomp")` and **rbi** version `r packageVersion("rbi")` on an Intel Xeon E5-2603 v3 1.6GHz (6-core) CPU and Nvidia Tesla P100 16GB NVLink GPU.
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 library(knitr)
@@ -45,9 +45,9 @@ library(plyr)
 library(tidyverse)
 library(rbi)
 library(rbi.helpers)
-library(pomp2)
+library(pomp)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp2")>"2.0.9")
+stopifnot(packageVersion("pomp")>"2.0.9")
 set.seed(557976883)
 ```
 
@@ -57,11 +57,11 @@ We consider fitting a stochastic SIR model to an influenza outbreak in a British
 Reports consist of the number of children confined to bed for each of the 14 days of the outbreak.
 The total number of children at the school was 763, and a total of 512 children spent time away from class.
 Only one adult developed influenza-like illness, so adults are omitted from the data and model.
-The data are provided with the **pomp2** package in the `bsflu` object.
-To find out how to install the **pomp2** package, read at the [pomp2 installation instructions](https://kingaa.github.io/pomp/install.html).
+The data are provided with the **pomp** package in the `bsflu` object.
+To find out how to install the **pomp** package, read at the [pomp installation instructions](https://kingaa.github.io/pomp/install.html).
 
 ```{r intro_load_bbs}
-library(pomp2)
+library(pomp)
 head(bsflu)
 ```
 
@@ -110,10 +110,10 @@ For example, one could include a latency period for infections, or one could mod
 We do not need a representation of $R_3$ since this variable has consequences neither for the dynamics of the state process nor for the data.
 Since we are confining ourselves for the present to fitting only the $B_n$ data, we need not track $R_2$.
 
-# Inference using iterated filtering with pomp2
+# Inference using iterated filtering with pomp
 
-We first conduct inference using the IF2 iterated filtering algorithm in **pomp2**.
-For more information on **pomp2**, consult the [pomp website](https://kingaa.github.io/pomp/), which contains plenty of documentation and examples.
+We first conduct inference using the IF2 iterated filtering algorithm in **pomp**.
+For more information on **pomp**, consult the [pomp website](https://kingaa.github.io/pomp/), which contains plenty of documentation and examples.
 
 We enumerate the state variables ($S$, $I$, $R_1$) and the parameters ($\beta$, $\mu_I$, $\rho$, $\mu_{R_1}$) as follows:
 
@@ -127,7 +127,7 @@ In the codes below, we'll refer to the data variables by their names ($B$, $C$),
 colnames(bsflu)
 ```
 
-The model code in **pomp2** is
+The model code in **pomp** is
 
 ```{r pomp_csnippets_bsflu}
 dmeas <- Csnippet("
@@ -176,7 +176,7 @@ Now we build the `pomp` object:
 ```{r pomp_bsflu}
 library(plyr)
 library(tidyverse)
-library(pomp2)
+library(pomp)
 
 bsflu %>%
   select(day,B) %>%
@@ -267,7 +267,7 @@ We proceed to carry out replicated particle filters at an initial guess of $\bet
 library(doRNG)
 registerDoRNG(625904618)
 bake(file="pf.rds",{
-  foreach(i=1:10,.packages='pomp2',
+  foreach(i=1:10,.packages='pomp',
     .export=c("flu","fixed_params")
   ) %dopar% {
     flu %>% pfilter(params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),Np=10000)
@@ -303,7 +303,7 @@ We fix `cooling.fraction.50=0.5`, so that after 50 `mif2` iterations, the pertur
 registerDoRNG(482947940)
 bake(file="box_search_local.rds",{
   foreach(i=1:20,
-    .packages='pomp2',
+    .packages='pomp',
     .combine=c, 
     .export=c("flu","fixed_params")
   ) %dopar%  
@@ -348,7 +348,7 @@ Therefore, we evaluate the likelihood, together with a standard error, using rep
 ```{r pomp_lik_local}
 registerDoRNG(900242057)
 bake(file="lik_local.rds",{
-  foreach(mf=mifs_local,.packages='pomp2',.combine=rbind) %dopar% 
+  foreach(mf=mifs_local,.packages='pomp',.combine=rbind) %dopar% 
   {
     evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
     ll <- logmeanexp(evals,se=TRUE)
@@ -405,7 +405,7 @@ guesses <- as.data.frame(apply(params_box,1,function(x)runif(300,x[1],x[2])))
 mf1 <- mifs_local[[1]]
 bake(file="box_search_global.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp2', 
+    .packages='pomp', 
     .combine=rbind,
     .export=c("mf1","fixed_params")
   ) %dopar% 
@@ -429,7 +429,7 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 ```
 The above codes run one search from each of `r nrow(guesses)` starting values.
 Each search consists of an initial run of `r nrow(traces(mf1))` IF2 iterations, followed by another 100 iterations.
-These codes exhibit a general **pomp2** behavior:
+These codes exhibit a general **pomp** behavior:
 re-running a command on an object (i.e., `mif2` on `mf1`) created by the same command preserves the algorithmic arguments.
 In particular, running `mif2` on the result of a `mif2` computation re-runs IF2 from the endpoint of the first run.
 In the second computation, by default, all algorithmic parameters are preserved;
@@ -470,7 +470,7 @@ We first load the necessary libraries
 library(rbi)
 library(rbi.helpers)
 library(stringi) ## for reading the model from a string
-library(pomp2) ## for the bsflu data set
+library(pomp) ## for the bsflu data set
 library(tidyverse)
 
 set.seed(296825852)
@@ -557,7 +557,7 @@ If an NVidia GPU is available, it can be used in the following codes by passing 
 
 ## Testing the codes
 
-As with the **pomp2** example, we start with testing the model syntax and running some simulations.
+As with the **pomp** example, we start with testing the model syntax and running some simulations.
 To check whether there are any errors in the model, one can use the `rewrite` command:
 
 ```{r rbi_rewrite, eval=FALSE}
@@ -699,9 +699,9 @@ gpu_minutes <- round(bi_read(posterior)$clock/1e+6/60)
 
 Using the GPU, generating 10,000 samples took `r gpu_minutes` minutes.
 
-## pMCMC in pomp2
+## pMCMC in pomp
 
-The *pomp2* package also implements pMCMC.
+The *pomp* package also implements pMCMC.
 To run this, we need to define a prior distribution.
 We can do this in the same way as before using a Csnippet.
 
@@ -732,6 +732,6 @@ pmcmc(pomp(mifs_local[[1]], dprior=Csnippet(priorDens),
 end <- Sys.time()
 ```
 
-Generating the 10,000 samples with **pomp2** took `r as.integer(round(difftime(end, start, units='mins')))` minutes.
+Generating the 10,000 samples with **pomp** took `r as.integer(round(difftime(end, start, units='mins')))` minutes.
 
 # References
