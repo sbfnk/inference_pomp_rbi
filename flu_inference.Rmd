@@ -195,7 +195,7 @@ bsflu %>%
 plot(flu,main="")
 ```
 
-## Testing the codes.
+## Testing the codes
 
 To develop and debug code, it is useful to have testing codes that run quickly and fail if the codes are not working correctly.
 As such a test, here we run some simulations and a particle filter.
@@ -229,7 +229,7 @@ plot(pf)
 
 The above plot shows the data (`B`), along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
 
-## Setting up the estimation problem.
+## Setting up the estimation problem
 
 Let's treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, and fix these parameters at the empirical means of the bed-confinement and convalescence times for symptomatic cases, respectively:
 
@@ -259,7 +259,7 @@ The first two lines above load the **foreach** and **doParallel** packages, the 
 The next line tells **foreach** that we will use the **doParallel** backend.
 By default, **R** will guess how many cores are available and will run about half this number of concurrent **R** processes.
 
-## Running a particle filter.
+## Running a particle filter
 
 We proceed to carry out replicated particle filters at an initial guess of $\beta=2$, $\mu_I=1$, and $\rho=0.9$.
 
@@ -551,7 +551,7 @@ bi <- libbi(model=flu_model, obs=obs, end_time=nrow(bsflu))
 
 If an NVidia GPU is available, it can be used in the following codes by passing `cuda=TRUE` to the `libbi` command (in which case it applies to all subsequent calls to libbi), or to any of the following commands (see [below](#rbi_gpu)).
 
-## Testing the codes.
+## Testing the codes
 
 As with the **pomp2** example, we start with testing the model syntax and running some simulations.
 To check whether there are any errors in the model, one can use the `rewrite` command:
